@@ -69,12 +69,39 @@ export const deleteEmploye = async (req, res) => {
            return res.status(404).json({ message: "Employee not found" });
         }
         employee.is_active = 0;
-        employee.delete_at = new Date();
+        employee.deleted_at = new Date();
         await employee.save();
         res.status(200).json({ message: "Employee deleted successfully" });
     }
     catch (error)
     {
         console.log(`Error deleting Employee: ${error}`);
+    }
+}
+
+export const updateEmploye = async (req, res) => {
+    try
+    {         
+        const { name, lastname, email, phone, address, salary, password, role, department } = req.body;
+        const empData = await EmployeModel.findByIdAndUpdate({ _id: req.body.id }, {
+            name: name,
+            lastname: lastname,
+            email: email,
+            phone: phone,
+            address: address,
+            salary: salary,
+            password: password,
+            role: role,
+            department: department 
+        });
+        if (!empData)
+        {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+        res.status(200).json({ message: "Employee updated successfully", employe: empData });
+    }
+    catch (error)
+    {
+        console.log(`Error for updating Employee: ${error}`);
     }
 }
