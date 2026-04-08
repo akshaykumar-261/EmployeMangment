@@ -1,10 +1,14 @@
 import express from "express";
-import { createEmployeValidation, loginValidation, userIdValidator, validateRequest } from "../controller/employeValidation.js";
-import { createEmploye, deleteEmploye, login, updateEmploye } from "../controller/employeController.js";
+import { createEmployeValidation, loginValidation, updateEmployeValidation, userIdValidator, validateRequest } from "../controller/employeValidation.js";
+import { createEmploye, deleteEmploye, getEmployee, getEmployeList, getMangerList, getQAList, login, updateEmploye } from "../controller/employeController.js";
 import authorize from "../middleweare/authmidleweare.js";
 const router = express.Router();
 router.post("/createEmployee",authorize, validateRequest(createEmployeValidation), createEmploye);
 router.post("/login", validateRequest(loginValidation), login);
-router.put("/updateEmp",authorize, updateEmploye);
-router.delete("/deleteEmp/:id",authorize, validateRequest(userIdValidator) ,deleteEmploye);
+router.put("/updateEmp",authorize,validateRequest(updateEmployeValidation) ,updateEmploye);
+router.delete("/deleteEmp/:id", authorize, validateRequest(userIdValidator), deleteEmploye);
+router.get("/getAllEmp", authorize, getEmployee);
+router.get("/getManager", getMangerList);
+router.get("/getEmployee", getEmployeList);
+router.get("/getQA", getQAList);
 export default router;

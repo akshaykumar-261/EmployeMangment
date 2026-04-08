@@ -1,6 +1,6 @@
 import EmployeModel from "../models/EmployesModel.js";
 import bcrypt from "bcryptjs";
-import jsonwebtoken from "jsonwebtoken";``
+import jsonwebtoken from "jsonwebtoken";
 export const createEmploye = async (req, res) => {
     try
     {
@@ -82,7 +82,7 @@ export const deleteEmploye = async (req, res) => {
 export const updateEmploye = async (req, res) => {
     try
     {         
-        const { name, lastname, email, phone, address, salary, password, role, department } = req.body;
+        const { name, lastname, email, phone, address, salary,role, department } = req.body;
         const empData = await EmployeModel.findByIdAndUpdate({ _id: req.body.id }, {
             name: name,
             lastname: lastname,
@@ -90,7 +90,6 @@ export const updateEmploye = async (req, res) => {
             phone: phone,
             address: address,
             salary: salary,
-            password: password,
             role: role,
             department: department 
         });
@@ -103,5 +102,73 @@ export const updateEmploye = async (req, res) => {
     catch (error)
     {
         console.log(`Error for updating Employee: ${error}`);
+    }
+}
+
+export const getEmployee = async (req,res) => {
+    try
+    {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 3;
+        const skip = (page - 1) * limit;
+        const totalEmployes = await EmployeModel.countDocuments();
+        const employees = await EmployeModel.find()
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 })
+        const totalPages = Math.ceil(totalEmployes / limit);
+        res.status(200).send({ page, limit, totalPages, totalEmployes, employees });
+        // const employee = await EmployeModel.find();
+        // if (!employee) return res.status(404).json({ message: "No employees found" });
+        // res.status(200).json({ employees: employee });
+    }
+    catch (error)
+    {
+        console.log(`Error for getting Employee: ${error}`);
+    }
+}
+export const getMangerList = async (req, res) => {
+    try {
+        const mangerList = await EmployeModel.find().populate({
+            path: "role",
+            match: { name: "Manager" }
+        });
+        const managers = mangerList.filter(emp => emp.role !== null);
+
+        res.status(200).json({ managers });
+    }
+    catch (error) {
+        console.log(`Error for getting Manager list: ${error}`);
+    }
+};
+
+export const getEmployeList = async (req, res) => {
+    try
+    {
+        const employeeList = await EmployeModel.find().populate({
+            path: "role",
+            match: { name: "Employee" }
+        });
+        const employees = employeeList.filter(emp => emp.role !== null);
+        res.status(200).json({ employees });
+    }
+    catch (error)
+    {
+        console.log(`Error for getting Employee list: ${error}`);
+    }
+}
+export const getQAList = async (req, res) => {
+    try
+    {
+        const employeeList = await EmployeModel.find().populate({
+            path: "role",
+            match: { name:"QA"}
+        });
+        const employees = employeeList.filter(emp => emp.role !== null);
+        res.status(200).json({ employees});
+    }
+    catch (error)
+    {
+        console.log(`Error for getting Employee list: ${error}`);
     }
 }

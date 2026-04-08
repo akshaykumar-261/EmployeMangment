@@ -26,10 +26,10 @@ export const updateEmployeValidation = Joi.object({
     phone: Joi.string().max(10).required(),
     address: Joi.string().max(200).required(),
     salary: Joi.number().optional(),
-    password: Joi.string().min(6).required(),
+    phone: Joi.string().min(10).max(10).required(),
     role: Joi.string().required(),
     department: Joi.string().required(),
- })
+});
 export const validateRequest = (schema) => {
     return (req, res, next) => {
         const { error } = schema.validate(req.body);
