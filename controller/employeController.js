@@ -111,16 +111,41 @@ export const getEmployee = async (req,res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 3;
         const skip = (page - 1) * limit;
+        const { search, role, department, salary, minSalary, maxSalary } = req.query;
+        const query = {};
+        if (search)
+        {
+            query.$or = [   // $regex is used for pattern matching, and $options: "i" makes the search case-insensitive
+                { name: { $regex: search, $options: "i" } },
+                { lastname: { $regex: search, $options: "i" } },
+                {email:{$regex: search, $options: "i"}},
+            ]
+        }
+        if (role)
+        {
+            query.role = role;
+        }
+        if (department)
+        {
+            query.department = department;
+        }
+        if (salary) {
+            query.salary = Number(salary);
+        }
+        else if (minSalary || maxSalary) {
+            query.salary = {};
+            if (minSalary) query.salary.$gte = Number(minSalary);   // $gte means greater than or equal to
+            if (maxSalary) query.salary.$lte = Number(maxSalary);   // $lte means less than or equal to
+        }
         const totalEmployes = await EmployeModel.countDocuments();
-        const employees = await EmployeModel.find()
+        const employees = await EmployeModel.find(query)
             .skip(skip)
             .limit(limit)
             .sort({ createdAt: -1 })
+            .populate("role")
+            .populate("department")
         const totalPages = Math.ceil(totalEmployes / limit);
         res.status(200).send({ page, limit, totalPages, totalEmployes, employees });
-        // const employee = await EmployeModel.find();
-        // if (!employee) return res.status(404).json({ message: "No employees found" });
-        // res.status(200).json({ employees: employee });
     }
     catch (error)
     {

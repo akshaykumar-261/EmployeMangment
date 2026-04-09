@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import RoleModel from "./roles.js";
+import DepartmentModel from "./departmentModel.js";
 const EmployesSchema = mongoose.Schema({
     name: {
         type: String,
