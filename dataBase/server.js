@@ -1,0 +1,10 @@
+import express from "express";
+import dotenv from "dotenv";
+import routeFile from "../route/routeFile.js";
+import startServer from "./connection.js";
+const app = express();
+dotenv.config();
+app.use(express.json());
+app.use("/api/managment", routeFile);
+const PORT = process.env.PORT;
+startServer(app, PORT);
