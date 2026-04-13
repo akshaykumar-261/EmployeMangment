@@ -1,4 +1,5 @@
 import express from "express";
+import checkRole from "../middleweare/rolemidleweare.js"
 import {
   createEmployeValidation,
   loginValidation,
@@ -34,6 +35,6 @@ router.delete(
   validateRequest(userIdValidator),
   deleteEmploye,
 );
-router.get("/getEmpList", authorize, getEmployee);
+router.get("/getEmpList", authorize,checkRole("Manager"),getEmployee);
 
 export default router;
