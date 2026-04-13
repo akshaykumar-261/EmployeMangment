@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import EmployeModel from "../models/EmployesModel.js";
-export const authorize = async (req, res) => {
+export const authorize = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {

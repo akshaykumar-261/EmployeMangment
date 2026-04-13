@@ -115,18 +115,23 @@ export const updateEmploye = async (req, res) => {
 
 export const getEmployee = async (req, res) => {
   try {
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * parseInt(limit);
+    const query = {};
     const result = await EmployeModel.aggregate([
       {
         $match: {
           ...query,
-          is_active: 1,
+          is_active: true,
           deleted_at: null,
         },
+      },
+      {
         $facet: {
           employees: [
             { $sort: { createdAt: -1 } },
             { $skip: skip },
-            { $limit: limit },
+            { $limit: parseInt(limit) },
           ],
           totalCount: [{ $count: "count" }],
         },
@@ -134,11 +139,10 @@ export const getEmployee = async (req, res) => {
     ]);
     const employees = result[0].employees;
     const totalEmployes = result[0].totalCount[0]?.count || 0;
-    const totalPages = Math.ceil(totalEmployes / limit);
-    /* is it possible to fetch whole paginated results in single query using aggregations  */
+    const totalPages = Math.ceil(totalEmployes / parseInt(limit));
+    /* is it possible to fetch whole paginated results in single query using aggregations */
     res.status(200).json({ page, limit, totalPages, totalEmployes, employees });
   } catch (error) {
     console.log(`Error for getting Employee: ${error}`);
   }
 };
-
