@@ -14,9 +14,11 @@ export const createEmploye = async (req, res) => {
       role,
       department,
     } = req.body;
-    const employe = await EmployeModel.findOne({
-      $or: [{ email: email }],
-    });
+    /*  do we need whole body destructing or can we pass request payload to service layer , learn pros and cons of both */
+    const employe = await EmployeModel.findOne(
+      { email },
+      /* why or condition for single field  */
+    );
     if (employe) {
       return res
         .status(400)
@@ -24,15 +26,15 @@ export const createEmploye = async (req, res) => {
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const newEmploye = await EmployeModel.create({
-      name: name,
-      lastname: lastname,
-      email: email,
-      phone: phone,
-      address: address,
-      salary: salary,
+      name,
+      lastname,
+      email,
+      phone,
+      address,
+      salary,
       password: hashPassword,
-      role: role,
-      department: department,
+      role,
+      department,
     });
     res
       .status(201)
@@ -87,19 +89,19 @@ export const updateEmploye = async (req, res) => {
   try {
     const { name, lastname, email, phone, address, salary, role, department } =
       req.body;
-    const empData = await EmployeModel.findByIdAndUpdate(
-      { _id: req.body.id },
-      {
-        name: name,
-        lastname: lastname,
-        email: email,
-        phone: phone,
-        address: address,
-        salary: salary,
-        role: role,
-        department: department,
-      },
-    );
+    /*  await CompanyUser.findByIdAndUpdate(
+    req.user.id,
+    filteredBody,
+  ); findByIdAndUpdate only take id as string , no need to pass keyvalue pair */
+    const empData = await EmployeModel.findByIdAndUpdate(req.body.id, {
+      name,
+      lastname,
+      phone,
+      address,
+      salary,
+      role,
+      department,
+    });
     if (!empData) {
       return res.status(404).json({ message: "Employee not found" });
     }
@@ -113,88 +115,30 @@ export const updateEmploye = async (req, res) => {
 
 export const getEmployee = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 3;
-    const skip = (page - 1) * limit;
-    const { search, role, department, salary, minSalary, maxSalary } =
-      req.query;
-    const query = {};
-    if (search) {
-      query.$or = [
-        // $regex is used for pattern matching, and $options: "i" makes the search case-insensitive
-        { name: { $regex: search, $options: "i" } },
-        { lastname: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ];
-    }
-    if (role) {
-      query.role = role;
-    }
-    if (department) {
-      query.department = department;
-    }
-    if (salary) {
-      query.salary = Number(salary);
-    } else if (minSalary || maxSalary) {
-      query.salary = {};
-      if (minSalary) query.salary.$gte = Number(minSalary); // $gte means greater than or equal to
-      if (maxSalary) query.salary.$lte = Number(maxSalary); // $lte means less than or equal to
-    }
-    const totalEmployes = await EmployeModel.countDocuments();
-    const employees = await EmployeModel.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .populate("role")
-      .populate("department");
+    const result = await EmployeModel.aggregate([
+      {
+        $match: {
+          ...query,
+          is_active: 1,
+          deleted_at: null,
+        },
+        $facet: {
+          employees: [
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+          ],
+          totalCount: [{ $count: "count" }],
+        },
+      },
+    ]);
+    const employees = result[0].employees;
+    const totalEmployes = result[0].totalCount[0]?.count || 0;
     const totalPages = Math.ceil(totalEmployes / limit);
-    res.status(200).send({ page, limit, totalPages, totalEmployes, employees });
+    /* is it possible to fetch whole paginated results in single query using aggregations  */
+    res.status(200).json({ page, limit, totalPages, totalEmployes, employees });
   } catch (error) {
     console.log(`Error for getting Employee: ${error}`);
   }
 };
-// export const getMangerList = async (req, res) => {
-//     try {
-//         const mangerList = await EmployeModel.find().populate({
-//             path: "role",
-//             match: { name: "Manager" }
-//         });
-//         const managers = mangerList.filter(emp => emp.role !== null);
 
-//         res.status(200).json({ managers });
-//     }
-//     catch (error) {
-//         console.log(`Error for getting Manager list: ${error}`);
-//     }
-// };
-
-// export const getEmployeList = async (req, res) => {
-//     try
-//     {
-//         const employeeList = await EmployeModel.find().populate({
-//             path: "role",
-//             match: { name: "Employee" }
-//         });
-//         const employees = employeeList.filter(emp => emp.role !== null);
-//         res.status(200).json({ employees });
-//     }
-//     catch (error)
-//     {
-//         console.log(`Error for getting Employee list: ${error}`);
-//     }
-// }
-// export const getQAList = async (req, res) => {
-//     try
-//     {
-//         const employeeList = await EmployeModel.find().populate({
-//             path: "role",
-//             match: { name:"QA"}
-//         });
-//         const employees = employeeList.filter(emp => emp.role !== null);
-//         res.status(200).json({ employees});
-//     }
-//     catch (error)
-//     {
-//         console.log(`Error for getting Employee list: ${error}`);
-//     }
-// }

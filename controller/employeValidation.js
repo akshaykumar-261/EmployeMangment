@@ -19,14 +19,13 @@ export const loginValidation = Joi.object({
   password: Joi.string().min(6).required(),
 });
 export const updateEmployeValidation = Joi.object({
+/* why are email and phone are required. if we have unique constrain on emial then it should not allow to update */
   id: Joi.string().required(),
   name: Joi.string().max(100).required(),
   lastname: Joi.string().max(100).optional().allow(null, ""),
-  email: Joi.string().email().required(),
-  phone: Joi.string().max(10).required(),
   address: Joi.string().max(200).required(),
   salary: Joi.number().optional(),
-  phone: Joi.string().min(10).max(10).required(),
+  phone: Joi.string().min(10).max(10).optional().allow(null,""),
   role: Joi.string().required(),
   department: Joi.string().required(),
 });

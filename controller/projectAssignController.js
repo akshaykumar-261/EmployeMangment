@@ -1,7 +1,5 @@
 import ProjectAssignModel from "../models/projectAssignModule.js";
 import TeamModel from "../models/teamModule.js";
-//import EmployeModel from "../models/EmployesModel.js";
-//import RoleModel from "../models/roles.js";
 export const assignProject = async (req, res) => {
   try {
     const { project_name, project_description, assign_project_team } = req.body;
@@ -18,7 +16,9 @@ export const assignProject = async (req, res) => {
   }
 };
 
-export const getAssignedProjects = async (req, res) => {
+export const getAllProjects = async (req, res) => {
+  /* why are we still using wrong naming , for getting user independent results naming should
+   following getAllProjects or getProjectsLIst */
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 3;
@@ -49,6 +49,7 @@ export const getAssignedProjects = async (req, res) => {
 export const getAssignedProjectById = async (req, res) => {
   try {
     const { id } = req.params;
+    /*  why no validation on id , what if id is null/undefined passed in api */
     const project = await ProjectAssignModel.findById(id);
     if (!project) {
       return res.status(400).json({ message: "Project not found" });
@@ -82,13 +83,14 @@ export const updateAssignedProject = async (req, res) => {
 export const deleteAssignedProject = async (req, res) => {
   try {
     const userId = req.params.id;
-    const project = await ProjectAssignModel.findById(userId);
+    /* no need to perform extra queries , findByIdAndUpdate will serve both purpose for checking and updating as well */
+    const project = await ProjectAssignModel.findByIdAndUpdate(userId, {
+      is_active: 0,
+      deleted_at: new Date()
+    })
     if (!project) {
       return res.status(400).json({ message: "Project not found" });
     }
-    project.is_active = 0;
-    project.deleted_at = new Date();
-    await project.save();
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
     console.log(`Error deleting assigned project: ${error}`);

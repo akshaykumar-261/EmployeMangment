@@ -9,9 +9,15 @@ export const authorize = async (req, res) => {
     const token = authHeader.split(" ")[1];
     const decode = jwt.verify(token, process.env.JWT_SECRET);
     // DataBase mai check user
-    const user = await EmployeModel.findById(decode.id);
+    const user = await EmployeModel.findOne({
+      _id: decode.id,
+      is_active: 1,
+      deleted_at: null,
+    });
+    /* if we are soft deleting users then why are we using findbyid and not checking if user is deleted or not 
+    . soft deleted user can still access all resources */
     if (!user) {
-      return res.status(400).json({ message: "User not Exit" });
+      return res.status(400).json({ message: "User not found or Inactive " });
     }
     req.user = user;
     next();
@@ -19,4 +25,4 @@ export const authorize = async (req, res) => {
     console.log(`Authorization realted error,${error}`);
   }
 };
-export default authorize; 
+export default authorize;

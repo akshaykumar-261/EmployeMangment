@@ -1,10 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
-import routeFile from "../route/routeFile.js";
+import employeeRoutes from "../route/routeEmploye.js";
+import projectRoutes from "../route/routeProject.js";
+import teamRoutes from "../route/routeTeam.js";
+import technologyRoutes from "../route/routerTechnology.js";
 import startServer from "./connection.js";
 const app = express();
 dotenv.config();
 app.use(express.json());
-app.use("/api/managment", routeFile);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/projects",projectRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/technologies", technologyRoutes);
 const PORT = process.env.PORT;
 startServer(app, PORT);

@@ -16,6 +16,9 @@ export const updateAssignValidation = Joi.object({
   //     })
   // ).required()
 });
+export const validateId = Joi.object({
+  id: Joi.string().required()
+});
 export const validateAssignRequest = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body);
