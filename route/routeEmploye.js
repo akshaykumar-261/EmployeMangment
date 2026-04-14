@@ -1,5 +1,5 @@
 import express from "express";
-import checkRole from "../middleweare/rolemidleweare.js"
+import checkRole from "../middleweare/rolemidleweare.js";
 import {
   createEmployeValidation,
   loginValidation,
@@ -19,6 +19,7 @@ const router = express.Router();
 router.post(
   "/createEmployee",
   authorize,
+  checkRole("Admin"),
   validateRequest(createEmployeValidation),
   createEmploye,
 );
@@ -26,15 +27,22 @@ router.post("/login", validateRequest(loginValidation), login);
 router.put(
   "/updateEmp",
   authorize,
+  checkRole("Admin"),
   validateRequest(updateEmployeValidation),
   updateEmploye,
 );
 router.delete(
   "/deleteEmp/:id",
   authorize,
+  checkRole("Admin"),
   validateRequest(userIdValidator),
   deleteEmploye,
 );
-router.get("/getEmpList", authorize,checkRole("Manager"),getEmployee);
+router.get(
+  "/getEmpList",
+  authorize,
+  checkRole("Manager", "Admin"),
+  getEmployee,
+);
 
 export default router;

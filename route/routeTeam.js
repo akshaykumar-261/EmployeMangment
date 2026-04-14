@@ -1,5 +1,6 @@
 import express from "express";
 import authorize from "../middleweare/authmidleweare.js";
+import checkRole from "../middleweare/rolemidleweare.js"
 import {
   createTeam,
   deleteTeam,
@@ -16,15 +17,17 @@ const router = express.Router();
 router.post(
   "/createdTeam",
   authorize,
+  checkRole("Admin"),
   validateTeamRequest(createTeamValidation),
   createTeam,
 );
 router.put(
   "/updatingTeam/:id",
   authorize,
+  checkRole("Admin","Manager"),
   validateTeamRequest(updateTeamValidation),
   updateTeam,
 );
-router.get("/teamList", authorize, getTeam);
-router.delete("/softDeleteTeam/:id", authorize, deleteTeam);
+router.get("/teamList", authorize,checkRole("Admin","Manager"),getTeam);
+router.delete("/softDeleteTeam/:id", authorize,checkRole("Admin","Manager"), deleteTeam);
 export default router;

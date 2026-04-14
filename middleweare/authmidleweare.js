@@ -13,7 +13,7 @@ export const authorize = async (req, res, next) => {
       _id: decode.id,
       is_active: 1,
       deleted_at: null,
-    });
+    }).populate("role");
     /* if we are soft deleting users then why are we using findbyid and not checking if user is deleted or not 
     . soft deleted user can still access all resources */
     if (!user) {

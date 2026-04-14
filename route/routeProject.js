@@ -1,4 +1,5 @@
 import authorize from "../middleweare/authmidleweare.js";
+import checkRole from "../middleweare/rolemidleweare.js";
 import express from "express";
 import {
   assignProject,
@@ -17,16 +18,33 @@ const router = express.Router();
 router.post(
   "/assignProject_to_team",
   authorize,
+  checkRole("Manager", "Admin"),
   validateAssignRequest(createAssignValidation),
   assignProject,
 );
-router.get("/assignedProjectsList", authorize, getAllProjects);
-router.get("/getProjectAssignById/:id", authorize, getAssignedProjectById);
+router.get(
+  "/assignedProjectsList",
+  authorize,
+  checkRole("Admin", "Manager", "Employee"),
+  getAllProjects,
+);
+router.get(
+  "/getProjectAssignById/:id",
+  authorize,
+  checkRole("Admin", "Manager", "Employee"),
+  getAssignedProjectById,
+);
 router.put(
   "/updateProjectAssign/:id",
   authorize,
+  checkRole("Manager", "Admin"),
   validateAssignRequest(updateAssignValidation),
   updateAssignedProject,
 );
-router.delete("/deleteProjectAssign/:id", authorize, deleteAssignedProject);
+router.delete(
+  "/deleteProjectAssign/:id",
+  authorize,
+  checkRole("Manager", "Admin"),
+  deleteAssignedProject,
+);
 export default router;

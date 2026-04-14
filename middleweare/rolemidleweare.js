@@ -6,7 +6,7 @@ export const checkRole = (...allowedRoles) => {
         return res.status(401).json({ message: "Unauthorized" });
       }
         // role Match Check
-      if (!allowedRoles.includes(req.user.roles)) {
+      if (!allowedRoles.includes(req.user.role.name)) {
         return res.status(403).json({
           message: `Access Denied. Allowed roles: ${allowedRoles.join(", ")}`,
         });
