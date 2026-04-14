@@ -14,11 +14,12 @@ import {
   validateAssignRequest,
 } from "../controller/projectAssignValidation.js";
 const router = express.Router();
+const role = checkRole("Manager", "Admin");
 // 1.Project assignment routes
 router.post(
   "/assignProject_to_team",
   authorize,
-  checkRole("Manager", "Admin"),
+  role,
   validateAssignRequest(createAssignValidation),
   assignProject,
 );
@@ -37,14 +38,14 @@ router.get(
 router.put(
   "/updateProjectAssign/:id",
   authorize,
-  checkRole("Manager", "Admin"),
+  role,
   validateAssignRequest(updateAssignValidation),
   updateAssignedProject,
 );
 router.delete(
   "/deleteProjectAssign/:id",
   authorize,
-  checkRole("Manager", "Admin"),
+  role,
   deleteAssignedProject,
 );
 export default router;

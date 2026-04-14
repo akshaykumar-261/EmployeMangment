@@ -16,10 +16,11 @@ import {
 } from "../controller/employeController.js";
 import authorize from "../middleweare/authmidleweare.js";
 const router = express.Router();
+const role = checkRole("Admin");
 router.post(
   "/createEmployee",
   authorize,
-  checkRole("Admin"),
+  role,
   validateRequest(createEmployeValidation),
   createEmploye,
 );
@@ -27,14 +28,14 @@ router.post("/login", validateRequest(loginValidation), login);
 router.put(
   "/updateEmp",
   authorize,
-  checkRole("Admin"),
+  role,
   validateRequest(updateEmployeValidation),
   updateEmploye,
 );
 router.delete(
   "/deleteEmp/:id",
   authorize,
-  checkRole("Admin"),
+  role,
   validateRequest(userIdValidator),
   deleteEmploye,
 );

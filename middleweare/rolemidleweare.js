@@ -1,10 +1,6 @@
 export const checkRole = (...allowedRoles) => {
   return (req, res, next) => {
     try {
-      // safety check
-      if (!req.user) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
         // role Match Check
       if (!allowedRoles.includes(req.user.role.name)) {
         return res.status(403).json({
