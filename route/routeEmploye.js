@@ -45,5 +45,4 @@ router.get(
   checkRole("Manager", "Admin"),
   getEmployee,
 );
-
 export default router;
