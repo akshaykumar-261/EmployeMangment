@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import http from "http";
-import { Server } from "socket.io"
+import { Server } from "socket.io";
 import socketHandler from "../socket/socketHandler.js";
 import employeeRoutes from "../route/routeEmploye.js";
 import projectRoutes from "../route/routeProject.js";
@@ -18,7 +18,7 @@ const io = new Server(server, {
   },
 });
 app.use("/api/employees", employeeRoutes);
-app.use("/api/projects",projectRoutes);
+app.use("/api/projects", projectRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/technologies", technologyRoutes);
 const PORT = process.env.PORT;

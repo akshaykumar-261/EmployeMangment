@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const startServer = async (app, PORT) => {
+const startServer = async (server, PORT) => {
   const port = PORT || process.env.PORT || 5000;
   /*there should be default port or value check if not provided*/
   try {
@@ -11,7 +11,7 @@ const startServer = async (app, PORT) => {
     process.exit(1);
   }
   try {
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   } catch (error) {
