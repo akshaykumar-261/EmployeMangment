@@ -1,11 +1,4 @@
 import jwt from "jsonwebtoken";
-import {
-  sendGroupJoin,
-  sendGroupMessageStatus,
-  sendLeaveGroup,
-  sendPrivateMessage,
-  sendWelcome,
-} from "./socketEvent.js";
 const users = new Map();
 const socketHandler = (io) => {
   io.use((socket, next) => {
@@ -15,22 +8,31 @@ const socketHandler = (io) => {
       if (!token) {
         return next(new Error("Token required"));
       }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
       socket.user = {
         id: decoded.id,
       };
+
       next();
     } catch (error) {
       next(new Error("Invalid Token"));
     }
   });
-  // User Connection
+
   io.on("connection", (socket) => {
     const userId = socket.user.id;
-    users.set(userId, socket.id);
-    console.log(`User ${userId} connected`);
-    sendWelcome(socket, userId);
 
+    users.set(userId, socket.id);
+
+    console.log(`User ${userId} connected`);
+
+    socket.emit("welcome", {
+      success: true,
+      userId,
+      message: "Connected Successfully",
+    });
     //Private Message
     socket.on("private_message", (data) => {
       if (typeof data === "string") {
@@ -43,24 +45,33 @@ const socketHandler = (io) => {
           from: userId,
           message,
         });
-        sendPrivateMessage(socket, true, "Message sent successfully");
+
+        socket.emit("message_status", {
+          success: true,
+          message: "Message sent successfully",
+        });
       } else {
-        sendPrivateMessage(socket, false, "Receiver is offline");
+        socket.emit("message_status", {
+          success: false,
+          message: "Receiver is offline",
+        });
       }
     });
-
     // group message
     socket.on("group_message", (data) => {
       if (typeof data === "string") {
         data = JSON.parse(data);
       }
-      const { groupId, message } = data;
+      const {groupId,message} = data 
       io.to(groupId).emit("receive_group_message", {
         groupId,
         from: userId,
         message,
       });
-      sendGroupMessageStatus(socket);
+      socket.emit("group_message_status", {
+        success: true,
+        message: "Group message sent successfully",
+      });
     });
     socket.on("join_group", (data) => {
       if (typeof data === "string") {
@@ -70,16 +81,27 @@ const socketHandler = (io) => {
       socket.join(groupId);
 
       console.log(`User ${userId} joined ${groupId}`);
-      sendGroupJoin(socket, groupId);
+
+      socket.emit("group_joined", {
+        success: true,
+        groupId,
+        message: `Joined ${groupId}`,
+      });
     });
     socket.on("leave_group", (data) => {
       if (typeof data === "string") {
         data = JSON.parse(data);
       }
-      const { groupId } = data;
+      const { groupId } = data;``
       socket.leave(groupId);
+
       console.log(`User ${userId} left ${groupId}`);
-      sendLeaveGroup(socket, groupId);
+
+      socket.emit("group_left", {
+        success: true,
+        groupId,
+        message: `Left ${groupId}`,
+      });
     });
 
     socket.on("disconnect", () => {

@@ -2,8 +2,8 @@ import { io } from "socket.io-client";
 
 const socket = io("http://localhost:8081", {
     auth: {
-      //69d5e54aa7b0cde6d8e7061b neha.kapoor3@example.com
-    token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVlNTRhYTdiMGNkZTZkOGU3MDYxYiIsImVtYWlsIjoibmVoYS5rYXBvb3IzQGV4YW1wbGUuY29tIiwicm9sZSI6IjY5ZDM4NzEwY2E2MjY3MTEyODA0ZjQzOSIsImlhdCI6MTc3NjMzMzAyNSwiZXhwIjoxNzc2MzM2NjI1fQ.f_9W2tbg7t12sl1onfrCDwJoeYKHCw7O3NRDFdsr-Aw",
+      //69d5e54aa7b0cde6d8e7061b   neha.kapoor3@example.com
+    token:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVlNTRhYTdiMGNkZTZkOGU3MDYxYiIsImVtYWlsIjoibmVoYS5rYXBvb3IzQGV4YW1wbGUuY29tIiwicm9sZSI6IjY5ZDM4NzEwY2E2MjY3MTEyODA0ZjQzOSIsImlhdCI6MTc3NjQwMTI5OSwiZXhwIjoxNzc2NDg3Njk5fQ.ku6fuBY563srj-kepjyqgOKNEFfsiF1phwtCj2Y-eBs",
   },
 });
 
@@ -25,7 +25,7 @@ socket.on("message_status", (data) => {
 
 setTimeout(() => {
   socket.emit("private_message", {
-    receiverId: "69d5e4baa7b0cde6d8e7061a",
+    receiverId: "69d5e585a7b0cde6d8e7061c",
     message: "Hello User 1",
   });
 }, 5000);

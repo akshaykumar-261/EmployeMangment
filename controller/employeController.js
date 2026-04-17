@@ -62,7 +62,7 @@ export const login = async (req, res) => {
         role: userInDb.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" },
+      { expiresIn: "1d"},
     );
     res.status(200).json({ message: "Login successfuly", token: token });
   } catch (error) {
