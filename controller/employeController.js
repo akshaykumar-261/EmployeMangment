@@ -61,8 +61,7 @@ export const login = async (req, res) => {
     userInDb.otpExpires = new Date(Date.now() + 5 * 60 * 1000);
     await userInDb.save();
     await sendOtpMail(userInDb.email, otp);
-    res.status(200).json({message: "Otp sent to your email"});
-    
+    res.status(200).json({ message: "Otp sent to your email" });
   } catch (error) {
     console.log(`Error logging in: ${error}`);
   }
@@ -73,12 +72,15 @@ export const verifyOtp = async (req, res) => {
     const userInDb = await EmployeModel.findOne({ email });
     if (!userInDb) {
       return res.status(404).json({
-        message:"User Not Found"
-      })
+        message: "User Not Found",
+      });
     }
-    if (userInDb.otp !== otp || !userInDb.otpExpires || userInDb.otpExpires < new Date())
-    {
-      return res.status(400).json({message: "Invalid or expire Otp"})
+    if (
+      userInDb.otp !== otp ||
+      !userInDb.otpExpires ||
+      userInDb.otpExpires < new Date()
+    ) {
+      return res.status(400).json({ message: "Invalid or expire Otp" });
     }
     const token = jsonwebtoken.sign(
       {
@@ -89,7 +91,7 @@ export const verifyOtp = async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",
-      }
+      },
     );
 
     userInDb.otp = null;
@@ -102,9 +104,9 @@ export const verifyOtp = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(`Error verifiying OTP: ${error}`)
+    console.log(`Error verifiying OTP: ${error}`);
   }
-}
+};
 export const deleteEmploye = async (req, res) => {
   try {
     const userId = req.params.id;
