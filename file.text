@@ -124,3 +124,14 @@
 router.get("/getManager", getMangerList);
 router.get("/getEmployee", getEmployeList);
 router.get("/getQA", getQAList);
+
+  const token = jsonwebtoken.sign(
+   {
+     id: userInDb._id,
+     email: userInDb.email,
+     role: userInDb.role,
+   },
+   process.env.JWT_SECRET,
+   { expiresIn: "1d"},
+ );
+ res.status(200).json({ message: "Login successfuly", token: token });

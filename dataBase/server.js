@@ -1,5 +1,5 @@
+import 'dotenv/config';
 import express from "express";
-import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 import socketHandler from "../socket/socketHandler.js";
@@ -9,7 +9,6 @@ import teamRoutes from "../route/routeTeam.js";
 import technologyRoutes from "../route/routerTechnology.js";
 import startServer from "./connection.js";
 const app = express();
-dotenv.config();
 app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {

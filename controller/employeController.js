@@ -1,6 +1,7 @@
 import EmployeModel from "../models/EmployesModel.js";
 import bcrypt from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
+import { sendOtpMail } from "../utility/sendEmail.js";
 export const createEmploye = async (req, res) => {
   try {
     const {
@@ -55,6 +56,30 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Inalid email or password" });
     }
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    userInDb.otp = otp;
+    userInDb.otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    await userInDb.save();
+    await sendOtpMail(userInDb.email, otp);
+    res.status(200).json({message: "Otp sent to your email"});
+    
+  } catch (error) {
+    console.log(`Error logging in: ${error}`);
+  }
+};
+export const verifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const userInDb = await EmployeModel.findOne({ email });
+    if (!userInDb) {
+      return res.status(404).json({
+        message:"User Not Found"
+      })
+    }
+    if (userInDb.otp !== otp || !userInDb.otpExpires || userInDb.otpExpires < new Date())
+    {
+      return res.status(400).json({message: "Invalid or expire Otp"})
+    }
     const token = jsonwebtoken.sign(
       {
         id: userInDb._id,
@@ -62,13 +87,24 @@ export const login = async (req, res) => {
         role: userInDb.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d"},
+      {
+        expiresIn: "1d",
+      }
     );
-    res.status(200).json({ message: "Login successfuly", token: token });
+
+    userInDb.otp = null;
+    userInDb.otpExpires = null;
+
+    await userInDb.save();
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+    });
   } catch (error) {
-    console.log(`Error logging in: ${error}`);
+    console.log(`Error verifiying OTP: ${error}`)
   }
-};
+}
 export const deleteEmploye = async (req, res) => {
   try {
     const userId = req.params.id;

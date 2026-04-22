@@ -45,6 +45,14 @@ const EmployesSchema = mongoose.Schema(
       ref: "departments",
       required: true,
     },
+    otp: {
+      type: String,
+      default: null,
+    },
+    otpExpires: {
+      type: Date,
+      default: null,
+    },
     is_active: {
       type: Boolean,
       default: true,

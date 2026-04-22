@@ -13,6 +13,7 @@ import {
   getEmployee,
   login,
   updateEmploye,
+  verifyOtp,
 } from "../controller/employeController.js";
 import authorize from "../middleweare/authmidleweare.js";
 const router = express.Router();
@@ -25,6 +26,7 @@ router.post(
   createEmploye,
 );
 router.post("/login", validateRequest(loginValidation), login);
+router.post("/verify-otp", verifyOtp);
 router.put(
   "/updateEmp",
   authorize,
