@@ -60,7 +60,7 @@ export const login = async (req, res) => {
     userInDb.otp = otp;
     userInDb.otpExpires = new Date(Date.now() + 5 * 60 * 1000);
     await userInDb.save();
-    await sendOtpMail(userInDb.email, otp);
+    await sendOtpMail(userInDb.email, otp, userInDb.name);
     res.status(200).json({ message: "Otp sent to your email" });
   } catch (error) {
     console.log(`Error logging in: ${error}`);
