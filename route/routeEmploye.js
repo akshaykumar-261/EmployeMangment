@@ -43,8 +43,7 @@ router.delete(
 );
 router.get(
   "/getEmpList",
-  authorize,
-  checkRole("Manager", "Admin"),
+  
   getEmployee,
 );
 export default router;

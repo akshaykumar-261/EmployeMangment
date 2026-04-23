@@ -2,7 +2,7 @@ import SibApiV3Sdk from "sib-api-v3-sdk";
 
 const client = SibApiV3Sdk.ApiClient.instance;
 
-// API key set
+// API key set karo
 const apiKey = client.authentications["api-key"];
 apiKey.apiKey = process.env.BREVO_API_KEY;
 

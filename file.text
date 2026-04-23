@@ -161,4 +161,4 @@ export const sendOtpMail = async (email, otp) => {
         `,
   });
 }; 
-
+"@getbrevo/brevo": "^5.0.4",
