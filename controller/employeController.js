@@ -93,7 +93,7 @@ export const verifyOtp = async (req, res) => {
         expiresIn: "1d",
       },
     );
-
+ 
     userInDb.otp = null;
     userInDb.otpExpires = null;
 

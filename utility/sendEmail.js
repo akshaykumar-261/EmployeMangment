@@ -1,42 +1,41 @@
-import nodemailer from "nodemailer";
+import SibApiV3Sdk from "sib-api-v3-sdk";
 
-console.log("SMTP_USER======>:", process.env.SMTP_USER);
-console.log("SMTP_PASS======>:", process.env.SMTP_PASS);
+const client = SibApiV3Sdk.ApiClient.instance;
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// API key set
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+// API instance
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
 export const sendOtpMail = async (email, otp, name = "User") => {
-  await transporter.sendMail({
-    from: `"Employee Management System" <${process.env.EMAIL_FROM}>`,
-    to: email,
-    subject: "Your Login OTP",
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Hello ${name},</h2>
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
 
-        <p>Your OTP for login is:</p>
+  sendSmtpEmail.subject = "Your Login OTP";
 
-        <h1 style="letter-spacing: 5px; color: blue;">
-          ${otp}
-        </h1>
+  sendSmtpEmail.htmlContent = `
+    <h2>Hello ${name}</h2>
+    <p>Your OTP is: <b>${otp}</b></p>
+    <p>This OTP will expire in 5 minutes.</p>
+  `;
 
-        <p>This OTP will expire in 5 minutes.</p>
+  sendSmtpEmail.sender = {
+    name: "Employee Management System",
+    email: process.env.EMAIL_FROM,
+  };
 
-        <p>If you did not request this login, please ignore this email.</p>
+  sendSmtpEmail.to = [
+    {
+      email,
+      name,
+    },
+  ];
 
-        <br />
-
-        <p>Regards,</p>
-        <p>Employee Management System</p>
-      </div>
-    `,
-  });
+  try {
+    const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("Email sent successfully:", response);
+  } catch (error) {
+    console.log("Error sending email:", error.response?.body || error.message);
+  }
 };
