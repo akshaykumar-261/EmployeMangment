@@ -204,3 +204,14 @@ export const sendOtpMail = async (email, otp, name = "User") => {
     console.log("Error sending email:", error.response?.body || error.message);
   }
 };
+
+************************************************************************************
+import * as employeController from "../controller/employeController.js";
+
+// Usage in router:
+router.post("/login", employeController.login);
+router.post("/verify-otp", employeController.verifyOtp);
+router.get("/employee/:id", employeController.getEmployee);
+router.post("/employee", employeController.createEmploye);
+router.put("/employee/:id", employeController.updateEmploye);
+router.delete("/employee/:id", employeController.deleteEmploye);
