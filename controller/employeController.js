@@ -1,7 +1,7 @@
 import EmployeModel from "../models/EmployesModel.js";
 import bcrypt from "bcryptjs";
 import jsonwebtoken from "jsonwebtoken";
-import { sendOtpMail } from "../utility/sendEmail.js";
+import { sendOtpMail } from "../utility/otpMail.js";
 import { empMESSAGE } from "../utility/helper/commMessage.js";
 import { sendResponse } from "../utility/helper/responseHandler.js";
 import { STATUS } from "../utility/helper/statusCode.js";
