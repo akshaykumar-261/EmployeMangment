@@ -1,7 +1,7 @@
 export const checkRole = (...allowedRoles) => {
   return (req, res, next) => {
     try {
-        // role Match Check
+      // role Match Check
       if (!allowedRoles.includes(req.user.role.name)) {
         return res.status(403).json({
           message: `Access Denied. Allowed roles: ${allowedRoles.join(", ")}`,

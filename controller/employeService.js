@@ -1,5 +1,4 @@
 import EmployeModel from "../models/EmployesModel.js";
-import ProjectAssignModel from "../models/projectAssignModule.js";
 
 export const findEmploye = (email) => {
   return EmployeModel.findOne({ email });
@@ -10,10 +9,14 @@ export const createEmp = (data) => {
 };
 
 export const findEmpAndDelete = (id) => {
-    return EmployeModel.findByIdAndUpdate(id, {
-        is_active: false,
-        deleted_at: new Date(),
-    },{new:true},)
+  return EmployeModel.findByIdAndUpdate(
+    id,
+    {
+      is_active: false,
+      deleted_at: new Date(),
+    },
+    { new: true },
+  );
 };
 export const updateEmployeById = (id, data) => {
   return EmployeModel.findByIdAndUpdate(id, data, { new: true });

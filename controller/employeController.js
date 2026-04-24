@@ -130,9 +130,6 @@ export const deleteEmploye = async (req, res) => {
     if (!employee) {
       return sendResponse(res, STATUS.NOT_FOUND, empMESSAGE.EMPLOYE_NOT_FOUND);
     }
-    employee.is_active = 0;
-    employee.deleted_at = new Date();
-    await employee.save();
     return sendResponse(res, STATUS.SUCCESS, empMESSAGE.EMPLOYE_DELETED);
   } catch (error) {
     console.log(`Error deleting Employee: ${error}`);
